@@ -2,9 +2,9 @@
 
 ![](_media/tag_logo.png)
 
-Stash tag is userscript to uses the playbar sprite images to do image recognition and return a list of possible tags to apply to the video.
+Stash tag is a tool that utilizes playbar sprite images to perform image recognition and generate a list of potential tags for a video.
 
-This is a userscript used with [Stash](https://github.com/stashapp/stash)
+To be used with [Stash](https://github.com/stashapp/stash)
 
 # Stash Userscripts
 
