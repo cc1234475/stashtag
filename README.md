@@ -18,5 +18,4 @@ Installation requires a browser extension such as [Violentmonkey](https://violen
 
 Once installed, A new icon will show on a scene's page next to the organized button.
 
-![](_media/face_scan_icon.png)
-
+![](_media/tag_scan_icon.png)
