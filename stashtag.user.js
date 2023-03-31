@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stashtag
 // @namespace    https://github.com/cc1234475
-// @version      0.0.1
+// @version      0.0.2
 // @description  Find tags for a scene
 // @author       cc12344567
 // @match        http://localhost:9999/*
@@ -76,10 +76,11 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
     <div class="modal-body">
       <div class="row justify-content-center">`;
 
-  var match = (id, tag, url, offsets) => `
+  var match = (id, tag, url, offsets, prob) => `
   <div style="padding: 5px;" id="tag-${id}" data-label="${tag}">
   <div class="scrubber-item" style="width: 160px; height: 90px; position: relative; background-position: -${offsets[0]}px -${offsets[1]}px; background-image: url(&quot;${url}&quot;);"></div>
   <span class="tag-item badge badge-secondary">${tag}
+  ${Math.round(prob * 100)}%
     <div role="button" class="react-select__multi-value__remove" aria-label="Remove ${tag}">
       <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
         <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
@@ -110,8 +111,8 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
     let ii = 0;
     for (const key in matches) {
       let offset = matches[key]['offset']
-      console.log(offset);
-      html += match(ii, key, url, offset);
+      let prob = matches[key]['prob']
+      html += match(ii, key, url, offset, prob);
       ii++;
     }
 
