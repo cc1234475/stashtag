@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stashtag
 // @namespace    https://github.com/cc1234475
-// @version      0.0.4
+// @version      0.0.5
 // @description  Find tags for a scene
 // @author       cc12344567
 // @match        http://localhost:9999/*
@@ -162,8 +162,11 @@ var OPTIONS = [
     let url = getUrlSprite();
 
     let ii = 0;
-    for (const key in matches) {
-      html += match(ii, key, url, matches[key].offset, matches[key].prob);
+
+    // sort by frame
+    matches = Object.entries(matches).sort((a, b) => b[1].frame - a[1].frame).reverse();
+    for (const data of matches) {
+      html += match(ii, data[0], url, data[1].offset, data[1].prob);
       ii++;
     }
 
