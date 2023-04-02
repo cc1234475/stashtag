@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stashtag
 // @namespace    https://github.com/cc1234475
-// @version      0.0.3
+// @version      0.0.4
 // @description  Find tags for a scene
 // @author       cc12344567
 // @match        http://localhost:9999/*
@@ -16,6 +16,36 @@
 
 var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
 // var AUTOTAG_API_URL = "http://localhost:7860/api/predict";
+
+var OPTIONS = [
+  'Anal',
+  'Vaginal Penetration',
+  'Blow Job',
+  'Doggy Style',
+  'Cowgirl',
+  'Reverse Cowgirl',
+  'Side Fuck',
+  'Seashell',
+  'Gape',
+  'Face Fuck',
+  'Fingering',
+  'Kneeling',
+  'Butter Churner',
+  'Table Top',
+  'Double Penetration',
+  'Missionary',
+  'Scissoring',
+  'Flatiron',
+  'Pussy Licking',
+  'Ass Licking',
+  'Ball Licking',
+  'Face Sitting',
+  'Hand Job',
+  'Tit Job',
+  '69',
+  'Kissing',
+  'Dildo',
+  'Cumshot'];
 
 (function () {
   "use strict";
@@ -57,7 +87,10 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
       <div class="modal-header"><span>Scanning...</span></div>
       <div class="modal-body">
         <div class="row justify-content-center">
-        <h3>Scanning Scene for tags</h3>
+          <h3>Scanning for tags</h3>
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
         </div>
       </div>
       <div class="ModalFooter modal-footer">
@@ -72,21 +105,44 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
   var top = `<div role="dialog" aria-modal="true" class="fade ModalComponent modal show" tabindex="-1" style="display: block">
 <div class="modal-dialog scrape-query-dialog modal-xl">
   <div class="modal-content">
-    <div class="modal-header"><span>Possible matching tags</span></div>
+    <div class="modal-header"><span>Tags</span></div>
     <div class="modal-body">
       <div class="row justify-content-center">`;
 
-  var match = (id, tag, url, offsets, prob) => `
-  <div style="padding: 5px;" id="tag-${id}" data-label="${tag}">
+  function match(id, tag, url, offsets, prob){
+    var confidence;
+    prob = prob * 100;
+
+    if (prob < 50.0) {
+      confidence = "danger";
+    } else if (prob < 75.0) {
+      confidence = "warning";
+    } else {
+      confidence = "success";
+    }
+
+    let html = `<div style="padding: 5px;">
   <div class="scrubber-item" style="width: 160px; height: 90px; position: relative; background-position: -${offsets[0]}px -${offsets[1]}px; background-image: url(&quot;${url}&quot;);"></div>
-  <span class="tag-item badge badge-secondary" style="width: 100%; padding: 0px; margin: 0px; border-radius: 0.25rem;">
-    ${tag} ${Math.round(prob * 100)}%
-    <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <div class="progress" style="height: 5px">
+    <div class="progress-bar progress-bar-striped bg-${confidence}" role="progressbar" style="width: ${prob}%" aria-valuenow="${prob}" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  <span class="tag-item badge badge-secondary" style="width: 100%; padding: 0px; margin: 0px; border-radius: 0.25rem;"><select class="tagselect" style="color: #fff">`
+  for (var i = 0; i < OPTIONS.length; i++) {
+    if (OPTIONS[i] == tag) {
+      html += `<option style="color: #fff" value="${OPTIONS[i]}" selected>${OPTIONS[i]}</option>`
+    } else {
+      html += `<option style="color: #fff" value="${OPTIONS[i]}">${OPTIONS[i]}</option>`
+    }
+  }
+   html +=`</select>
+    <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false" id="tag-${id}" data-label="${tag}">
       <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
     </svg>
   </span>
   </div>
   `;
+  return html;
+  }
 
   var bottom = `</div>
   </div>
@@ -104,7 +160,6 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
     var html = top;
     let tags = await get_all_tags();
     let url = getUrlSprite();
-    console.log(matches);
 
     let ii = 0;
     for (const key in matches) {
@@ -122,7 +177,13 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
     $("#tags_accept").click(async function () {
       const scene_id = get_scene_id();
       let existing_tags = await get_tags_for_scene(scene_id);
-      for (const tag in matches) {
+
+      let selected_tags = [];
+      $('.tagselect option:selected').each(function(){
+        selected_tags.push($(this).text());
+      });
+
+      for (const tag of selected_tags) {
         // if tag doesn't exist, create it
         if (tags[tag] === undefined) {
           existing_tags.push(await create_tag(tag));
@@ -140,7 +201,7 @@ var AUTOTAG_API_URL = "https://cc1234-stashtag.hf.space/api/predict";
       $(`#tag-${ii}`).click(function () {
         let label = $(this).data('label');
         delete matches[label];
-        $(this).remove();
+        $(this).parent().parent().remove();
       });
       ii++;
     }
