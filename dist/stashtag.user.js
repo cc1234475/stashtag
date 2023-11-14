@@ -2,7 +2,7 @@
 // @name        stashtag
 // @description Find tags for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.1
+// @version     0.1.2
 // @homepage    https://github.com/cc1234475/stashtag
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashtag/main/dist/bundle.css
@@ -78,6 +78,10 @@ GM_addStyle(GM_getResourceText('css'));
     });
   }
 
+  /**
+   * Returns an array containing the scenario and scenario ID extracted from the current URL.
+   * @returns {Array<string>} An array containing the scenario and scenario ID.
+   */
   function getScenarioAndID() {
     var result = document.URL.match(/(scenes|images)\/(\d+)/);
     var scenario = result[1];
@@ -86,6 +90,12 @@ GM_addStyle(GM_getResourceText('css'));
   }
 
 
+  /**
+   * Retrieves the tags associated with a given scene ID.
+   *
+   * @param {string} scene_id - The ID of the scene to retrieve tags for.
+   * @returns {Promise<string[]>} - A promise that resolves with an array of tag IDs.
+   */
   async function getTagsForScene(scene_id) {
     const reqData = {
       query: `{
@@ -101,6 +111,12 @@ GM_addStyle(GM_getResourceText('css'));
   }
 
 
+  /**
+   * Updates a scene with the given scene_id and tag_ids.
+   * @param {string} scene_id - The ID of the scene to update.
+   * @param {Array<string>} tag_ids - An array of tag IDs to associate with the scene.
+   * @returns {Promise<Object>} - A promise that resolves with the updated scene object.
+   */
   async function updateScene(scene_id, tag_ids) {
     const reqData = {
       variables: { input: { id: scene_id, tag_ids: tag_ids } },
@@ -114,6 +130,11 @@ GM_addStyle(GM_getResourceText('css'));
   }
 
 
+  /**
+   * Creates a new tag with the given name.
+   * @param {string} tag_name - The name of the tag to create.
+   * @returns {Promise<string>} - A Promise that resolves with the ID of the newly created tag.
+   */
   async function createTag(tag_name) {
     const reqData = {
       variables: { input: {name: tag_name} },
@@ -128,6 +149,10 @@ GM_addStyle(GM_getResourceText('css'));
   }
 
 
+  /**
+   * Retrieves all tags from the server and returns them as a map with tag names (and aliases) as keys and tag IDs as values.
+   * @returns {Promise<Object>} A promise that resolves to an object with tag names (and aliases) as keys and tag IDs as values.
+   */
   async function getAllTags() {
     const reqData = {
       query: `{
@@ -149,6 +174,12 @@ GM_addStyle(GM_getResourceText('css'));
   }
 
 
+  /**
+   * Retrieves the URL of the sprite for a given scene ID.
+   *
+   * @param {number} scene_id - The ID of the scene to retrieve the sprite URL for.
+   * @returns {Promise<string|null>} - A Promise that resolves with the sprite URL if it exists, or null if it does not.
+   */
   async function getUrlSprite(scene_id) {
     const reqData = {
       query: `{
@@ -1364,7 +1395,7 @@ GM_addStyle(GM_getResourceText('css'));
   	return child_ctx;
   }
 
-  // (80:0) {#if visible}
+  // (81:0) {#if visible}
   function create_if_block(ctx) {
   	let div8;
   	let div7;
@@ -1576,7 +1607,7 @@ GM_addStyle(GM_getResourceText('css'));
   	};
   }
 
-  // (98:12) {#each filteredMatches as [tagName, tagData] (tagData.id)}
+  // (99:12) {#each filteredMatches as [tagName, tagData] (tagData.id)}
   function create_each_block(key_1, ctx) {
   	let div;
   	let tag;
@@ -1673,7 +1704,7 @@ GM_addStyle(GM_getResourceText('css'));
   	};
   }
 
-  // (128:14) {#if saving}
+  // (129:14) {#if saving}
   function create_if_block_1(ctx) {
   	let div;
 
@@ -1793,11 +1824,13 @@ GM_addStyle(GM_getResourceText('css'));
   		let existingTags = await getTagsForScene(scene_id);
 
   		for (const [tag] of filteredMatches) {
+  			let tagLower = tag.toLowerCase();
+
   			// if tag doesn't exist, create it
-  			if (tags[tag] === undefined) {
+  			if (tags[tagLower] === undefined) {
   				existingTags.push(await createTag(tag));
-  			} else if (!existingTags.includes(tags[tag])) {
-  				existingTags.push(tags[tag]);
+  			} else if (!existingTags.includes(tags[tagLower])) {
+  				existingTags.push(tags[tagLower]);
   			}
   		}
 

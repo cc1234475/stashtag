@@ -56,6 +56,10 @@ export function waitForElm(selector) {
   });
 }
 
+/**
+ * Returns an array containing the scenario and scenario ID extracted from the current URL.
+ * @returns {Array<string>} An array containing the scenario and scenario ID.
+ */
 export function getScenarioAndID() {
   var result = document.URL.match(/(scenes|images)\/(\d+)/);
   var scenario = result[1];
@@ -64,6 +68,12 @@ export function getScenarioAndID() {
 }
 
 
+/**
+ * Retrieves the tags associated with a given scene ID.
+ *
+ * @param {string} scene_id - The ID of the scene to retrieve tags for.
+ * @returns {Promise<string[]>} - A promise that resolves with an array of tag IDs.
+ */
 export async function getTagsForScene(scene_id) {
   const reqData = {
     query: `{
@@ -79,6 +89,12 @@ export async function getTagsForScene(scene_id) {
 }
 
 
+/**
+ * Updates a scene with the given scene_id and tag_ids.
+ * @param {string} scene_id - The ID of the scene to update.
+ * @param {Array<string>} tag_ids - An array of tag IDs to associate with the scene.
+ * @returns {Promise<Object>} - A promise that resolves with the updated scene object.
+ */
 export async function updateScene(scene_id, tag_ids) {
   const reqData = {
     variables: { input: { id: scene_id, tag_ids: tag_ids } },
@@ -92,6 +108,11 @@ export async function updateScene(scene_id, tag_ids) {
 }
 
 
+/**
+ * Creates a new tag with the given name.
+ * @param {string} tag_name - The name of the tag to create.
+ * @returns {Promise<string>} - A Promise that resolves with the ID of the newly created tag.
+ */
 export async function createTag(tag_name) {
   const reqData = {
     variables: { input: {name: tag_name} },
@@ -106,6 +127,10 @@ export async function createTag(tag_name) {
 }
 
 
+/**
+ * Retrieves all tags from the server and returns them as a map with tag names (and aliases) as keys and tag IDs as values.
+ * @returns {Promise<Object>} A promise that resolves to an object with tag names (and aliases) as keys and tag IDs as values.
+ */
 export async function getAllTags() {
   const reqData = {
     query: `{
@@ -127,6 +152,12 @@ export async function getAllTags() {
 }
 
 
+/**
+ * Retrieves the URL of the sprite for a given scene ID.
+ *
+ * @param {number} scene_id - The ID of the scene to retrieve the sprite URL for.
+ * @returns {Promise<string|null>} - A Promise that resolves with the sprite URL if it exists, or null if it does not.
+ */
 export async function getUrlSprite(scene_id) {
   const reqData = {
     query: `{

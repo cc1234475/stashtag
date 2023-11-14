@@ -59,11 +59,12 @@
     let existingTags = await getTagsForScene(scene_id);
 
     for (const [tag] of filteredMatches) {
+      let tagLower = tag.toLowerCase();
       // if tag doesn't exist, create it
-      if (tags[tag] === undefined) {
+      if (tags[tagLower] === undefined) {
         existingTags.push(await createTag(tag));
-      } else if (!existingTags.includes(tags[tag])) {
-        existingTags.push(tags[tag]);
+      } else if (!existingTags.includes(tags[tagLower])) {
+        existingTags.push(tags[tagLower]);
       }
     }
     await updateScene(scene_id, existingTags);
