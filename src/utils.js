@@ -118,9 +118,9 @@ export async function getAllTags() {
   };
   var result = await stash.callGQL(reqData);
   return result.data.allTags.reduce((map, obj) => {
-    map[obj.name] = obj.id;
+    map[obj.name.toLowerCase()] = obj.id;
     obj.aliases.forEach((alias) => {
-      map[alias] = obj.id;
+      map[alias.toLowerCase()] = obj.id;
     });
     return map;
   }, {});

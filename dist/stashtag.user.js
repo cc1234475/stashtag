@@ -2,7 +2,7 @@
 // @name        stashtag
 // @description Find tags for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.0
+// @version     0.1.1
 // @homepage    https://github.com/cc1234475/stashtag
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashtag/main/dist/bundle.css
@@ -140,9 +140,9 @@ GM_addStyle(GM_getResourceText('css'));
     };
     var result = await stash$1.callGQL(reqData);
     return result.data.allTags.reduce((map, obj) => {
-      map[obj.name] = obj.id;
+      map[obj.name.toLowerCase()] = obj.id;
       obj.aliases.forEach((alias) => {
-        map[alias] = obj.id;
+        map[alias.toLowerCase()] = obj.id;
       });
       return map;
     }, {});
