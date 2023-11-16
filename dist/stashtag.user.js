@@ -2,7 +2,7 @@
 // @name        stashtag
 // @description Find tags for a scene
 // @namespace   https://github.com/cc1234475
-// @version     0.1.2
+// @version     0.1.3
 // @homepage    https://github.com/cc1234475/stashtag
 // @author      cc12344567
 // @resource    css https://raw.githubusercontent.com/cc1234475/stashtag/main/dist/bundle.css
@@ -1909,6 +1909,7 @@ GM_addStyle(GM_getResourceText('css'));
   		c() {
   			button = element("button");
   			button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="m21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4a2 2 0 0 0-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58c.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41c0-.55-.23-1.06-.59-1.42M5.5 7A1.5 1.5 0 0 1 4 5.5A1.5 1.5 0 0 1 5.5 4A1.5 1.5 0 0 1 7 5.5A1.5 1.5 0 0 1 5.5 7m11.77 8.27L13 19.54l-4.27-4.27A2.52 2.52 0 0 1 8 13.5a2.5 2.5 0 0 1 2.5-2.5c.69 0 1.32.28 1.77.74l.73.72l.73-.73c.45-.45 1.08-.73 1.77-.73a2.5 2.5 0 0 1 2.5 2.5c0 .69-.28 1.32-.73 1.77Z"></path></svg>`;
+  			attr(button, "id", "stashtag");
   			attr(button, "class", "svelte-xcs6vi");
   			toggle_class(button, "scanner", /*scanner*/ ctx[0]);
   		},
@@ -2032,7 +2033,9 @@ GM_addStyle(GM_getResourceText('css'));
   stash.addEventListener("page:scene", function () {
       let elms = ".ml-auto .btn-group";
       waitForElm(elms).then(() => {
-          new Button({ target: document.querySelector(elms) });
+          if (!document.querySelector("#stashtag")) {
+              new Button({ target: document.querySelector(elms) });
+          }
       });
   });
 
